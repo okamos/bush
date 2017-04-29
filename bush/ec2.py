@@ -1,7 +1,7 @@
-from session import create_session
+from bush.session import create_session
 
 import re
-import color
+from bush import color
 
 
 SUB_COMMANDS = ["ls"]

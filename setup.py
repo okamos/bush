@@ -16,7 +16,7 @@ requires = [
 
 
 def get_version():
-    line = open(os.path.join(ROOT_DIR, 'boto3', '__init__.py')).read()
+    line = open(os.path.join(ROOT_DIR, 'bush', '__init__.py')).read()
     return VERSION_RE.search(line).group(1)
 
 
@@ -28,9 +28,12 @@ setup(
     author='Shinichi Okamoto',
     url='https://github.com/okamos/bush',
     scripts=[],
-    packages=find_packages(exclude=['tests*']),
+    packages=find_packages(exclude=['tests']),
     include_package_data=True,
     install_requires=requires,
+    entry_points={
+        'console_scripts': 'bush = bush.main:run'
+    },
     license="MIT",
     # ref https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -43,6 +46,10 @@ setup(
         # 'Development Status :: 7 - Inactive',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python'
+        'Programming Language :: Python :: 2.6'
+        'Programming Language :: Python :: 2.7'
+        'Programming Language :: Python :: 3.5'
         'Programming Language :: Python :: 3.6'
     ],
 )

@@ -1,1 +1,4 @@
-/bush/__pycache__/
+build/
+bush.egg-info/
+dist/
+bush/__pycache__/

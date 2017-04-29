@@ -1,9 +1,9 @@
 from optparse import OptionParser, OptionGroup
 
 import sys
-import __init__
 
-import ec2
+from . import __version__
+from bush import ec2
 
 
 def parse_args(prog_name):
@@ -14,7 +14,8 @@ def parse_args(prog_name):
 Resources
     * ec2
     """[1:-1] % prog_name
-    version = "%s %s" % (prog_name, __init__.__version__)
+
+    version = "%s %s" % (prog_name, __version__)
 
     parser = OptionParser(usage=usage, version=version)
     parser.add_option("-p", "--profile",

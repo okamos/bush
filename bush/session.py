@@ -3,7 +3,7 @@ import os
 
 import botocore
 from boto3 import session
-import color
+from bush import color
 
 
 def create_session(options):

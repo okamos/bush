@@ -1,5 +1,5 @@
-import option
-import ec2
+from bush import option
+from bush import ec2
 
 
 (options, args) = option.parse_args("bush")
