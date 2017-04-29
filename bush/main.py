@@ -1,6 +1,9 @@
 import option
-from session import create_session
+import ec2
 
 
-(options, args) = option.parse_args("Bush")
-session = create_session(options)
+(options, args) = option.parse_args("bush")
+
+if args[0] == 'ec2':
+    if args[1] == 'ls':
+        ec2.list(options)
