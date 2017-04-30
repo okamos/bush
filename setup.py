@@ -24,7 +24,7 @@ setup(
     name='bush',
     version=get_version(),
     description='Easy to use, AWS operations by cli',
-    # long_description=open('README.rst').read(),
+    long_description=open('README.rst').read(),
     author='Shinichi Okamoto',
     url='https://github.com/okamos/bush',
     scripts=[],
