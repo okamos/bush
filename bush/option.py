@@ -3,7 +3,7 @@ from optparse import OptionParser, OptionGroup
 import sys
 
 from . import __version__
-from bush import ec2
+from bush.aws.ec2 import EC2
 
 
 def parse_args(prog_name):
@@ -36,13 +36,13 @@ Resources
         sys.exit(2)
 
     if sys.argv[1] == 'ec2':
-        parser.set_usage(ec2.usage(prog_name))
+        parser.set_usage(EC2.USAGE % prog_name)
         group = OptionGroup(parser, "EC2 Options")
         # group.add_option("-c", "--column", dest="columns",
         #                  help="columns are")
         parser.add_option_group(group)
 
-        if len(sys.argv) < 3 or not (sys.argv[2] in ec2.SUB_COMMANDS):
+        if len(sys.argv) < 3 or not (sys.argv[2] in EC2.SUB_COMMANDS):
             parser.print_help()
             sys.exit(2)
 
