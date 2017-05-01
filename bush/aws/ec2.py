@@ -10,6 +10,24 @@ Commands
     * list
     """[1:-1]
     SUB_COMMANDS = ["ls"]
+
+    COLUMNS_HELP = """
+select columns, comma separated.
+availability_zone
+image_id
+instance_id
+instance_type
+key_name
+launch_time
+private_dns_name
+private_ip_address
+public_dns_name
+public_ip_address
+security_groups
+state
+tag_Name
+
+    """[1:-1]
     TAG_RE = re.compile(r"^tag_(.+)")
 
     def __init__(self, options):
@@ -54,6 +72,16 @@ Commands
 
         return max_len
 
+    def __get_max_len_from_security_groups(self):
+        max_len = 15  # <security_groups>
+        for instance in self.instances:
+            val = self.__get_security_group_names(instance.security_groups)
+
+            if max_len < len(val):
+                max_len = len(val)
+
+        return max_len
+
     def __get_tag_value(self, tags, key):
         if tags is None:
             return ""
@@ -77,6 +105,14 @@ Commands
         else:
             return state
 
+    def __get_security_group_names(self, groups):
+        names = []
+        if groups:
+            for g in groups:
+                names.append(g["GroupName"])
+
+        return ", ".join(names)
+
     def __get_list_format(self, headers):
         formats = []
         for i, header in enumerate(headers):
@@ -85,6 +121,12 @@ Commands
                 len = self.__get_max_len_from_tag(tag_key.groups()[0], header)
             elif header == "state":
                 len = self.__get_max_len_from_state()
+            elif header == "availability_zone":
+                len = 17  # <availability_zone>
+            elif header == "launch_time":
+                len = 19  # YYYY/mm/dd HH:MM:SS
+            elif header == "security_groups":
+                len = self.__get_max_len_from_security_groups()
             else:
                 len = self.__get_max_len(header)
             formats.append("{%s:<%s}" % (i, len + 1))
@@ -92,8 +134,7 @@ Commands
         return "".join(formats)
 
     def ls(self):
-        # TODO: choose columns
-        headers = [
+        default_columns = [
             "instance_id",
             "instance_type",
             "tag_Name",
@@ -101,7 +142,28 @@ Commands
             "private_ip_address",
             "state"
         ]
-        order_column = 'tag_Name'
+
+        other_columns = [
+            "availability_zone",
+            "image_id",
+            "key_name",
+            "launch_time",
+            "private_dns_name",
+            "public_dns_name",
+            "security_groups",
+        ]
+
+        all_columns = default_columns + other_columns
+        if self.options.columns:
+            columns = []
+            # unique
+            for c in self.options.columns.split(","):
+                if c not in columns:
+                    columns.append(c)
+        else:
+            columns = default_columns
+
+        headers = [h for h in columns if h in all_columns]
 
         self.__get_instances()
 
@@ -113,6 +175,14 @@ Commands
                 if tag_key:
                     val = self.__get_tag_value(instance.tags,
                                                tag_key.groups()[0])
+                elif h == "availability_zone":
+                    val = instance.placement["AvailabilityZone"]
+                elif h == "launch_time":
+                    if instance.launch_time:
+                        time_format = "%Y/%m/%d %H:%M:%S"
+                        val = instance.launch_time.strftime(time_format)
+                elif h == "security_groups":
+                    val = self.__get_security_group_names(instance.security_groups)
                 elif h == "state":
                     val = self.__get_state(instance)
                 else:
@@ -123,10 +193,17 @@ Commands
 
         list_format = self.__get_list_format(headers)
         header = list_format.format(*headers)
+
+        order_by = self.options.order_by
+        if order_by and order_by in headers:
+            i_info = sorted(i_info, key=lambda x: x[order_by])
+            if self.options.order == "desc":
+                i_info.reverse()
+
         print(header)
         print("-" * len(header))
-        sorted_list = sorted(i_info, key=lambda x: x[order_column])
-        for line in sorted_list:
+
+        for line in i_info:
             l = []
             for k in line:
                 l.append(line[k])

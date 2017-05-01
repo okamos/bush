@@ -18,6 +18,3 @@ ec2
     - remove - ec2 terminate
   options
     -f         filter instances
-    -c         select columns
-    -o         order asc or desc, it only works ls sub command.
-    --orderby  order by column, it only works ls sub command.

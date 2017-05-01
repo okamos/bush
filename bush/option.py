@@ -35,15 +35,21 @@ Resources
         parser.print_help()
         sys.exit(2)
 
-    if sys.argv[1] == 'ec2':
+    if sys.argv[1] == "ec2":
         parser.set_usage(EC2.USAGE % prog_name)
         group = OptionGroup(parser, "EC2 Options")
-        # group.add_option("-c", "--column", dest="columns",
-        #                  help="columns are")
         parser.add_option_group(group)
 
         if len(sys.argv) < 3 or not (sys.argv[2] in EC2.SUB_COMMANDS):
             parser.print_help()
             sys.exit(2)
+
+        if sys.argv[2] == "ls":
+            group.add_option("-c", "--columns", dest="columns",
+                             help=EC2.COLUMNS_HELP)
+            group.add_option("-o", "--order", dest="order",
+                             help="list order, asc or desc")
+            group.add_option("--order_by", dest="order_by",
+                             help="order by column")
 
     return parser.parse_args()
