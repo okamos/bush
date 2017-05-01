@@ -2,6 +2,7 @@ import re
 from bush import color
 from bush.aws.base import AWSBase
 
+
 class EC2(AWSBase):
     USAGE = """
 %s ec2 <Command> [options]
@@ -182,7 +183,8 @@ tag_Name
                         time_format = "%Y/%m/%d %H:%M:%S"
                         val = instance.launch_time.strftime(time_format)
                 elif h == "security_groups":
-                    val = self.__get_security_group_names(instance.security_groups)
+                    val = self.__get_security_group_names(
+                            instance.security_groups)
                 elif h == "state":
                     val = self.__get_state(instance)
                 else:
@@ -201,7 +203,7 @@ tag_Name
                 i_info.reverse()
 
         print(header)
-        print("-" * len(header))
+        print("-" * (len(header) - 1))
 
         for line in i_info:
             l = []
