@@ -35,8 +35,18 @@ tag_Name
         super().__init__(options, "ec2")
 
     def __get_instances(self):
-        # TODO: filter instances
-        self.instances = self.resource.instances.all()
+        options = self.options
+        if options.instance_id:
+            f = {"Name": "instance-id",
+                 "Values": options.instance_id.split(",")}
+        elif options.tag_name:
+            f = {"Name": "tag:Name",
+                 "Values": options.tag_name.split(",")}
+        else:
+            self.instances = self.resource.instances.all()
+            return
+
+        self.instances = self.resource.instances.filter(Filters=[f])
 
     def __get_max_len(self, attr):
         max_len = len(attr)

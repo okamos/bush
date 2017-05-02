@@ -38,6 +38,10 @@ Resources
     if sys.argv[1] == "ec2":
         parser.set_usage(EC2.USAGE % prog_name)
         group = OptionGroup(parser, "EC2 Options")
+        group.add_option("--id", dest="instance_id",
+                         help="filter instance ids, comma separated")
+        group.add_option("--name", dest="tag_name",
+                         help="filter tag_Name, comma separated")
         parser.add_option_group(group)
 
         if len(sys.argv) < 3 or not (sys.argv[2] in EC2.SUB_COMMANDS):
