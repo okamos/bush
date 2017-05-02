@@ -35,17 +35,24 @@ tag_Name
         super().__init__(options, "ec2")
 
     def __get_instances(self):
+        filter_name = ""
+        filter_values = ""
         options = self.options
+
         if options.instance_id:
-            f = {"Name": "instance-id",
-                 "Values": options.instance_id.split(",")}
+            filter_name = "instance-id"
+            filter_values = options.instance_id.split(",")
         elif options.tag_name:
-            f = {"Name": "tag:Name",
-                 "Values": options.tag_name.split(",")}
+            filter_name = "tag:Name"
+            filter_values = options.tag_name.split(",")
+        elif options.filter_name and options.filter_values:
+            filter_name = options.filter_name
+            filter_values = options.filter_values.split(",")
         else:
             self.instances = self.resource.instances.all()
             return
 
+        f = {"Name": filter_name, "Values": filter_values}
         self.instances = self.resource.instances.filter(Filters=[f])
 
     def __get_max_len(self, attr):

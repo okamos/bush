@@ -42,6 +42,10 @@ Resources
                          help="filter instance ids, comma separated")
         group.add_option("--name", dest="tag_name",
                          help="filter tag_Name, comma separated")
+        group.add_option("--filter_name", dest="filter_name",
+                         help="Use a specific filter name")
+        group.add_option("--filter_values", dest="filter_values",
+                         help="filter values, comma separated")
         parser.add_option_group(group)
 
         if len(sys.argv) < 3 or not (sys.argv[2] in EC2.SUB_COMMANDS):
