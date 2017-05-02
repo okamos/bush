@@ -41,7 +41,7 @@ Resources
         group.add_option("--id", dest="instance_id",
                          help="filter instance ids, comma separated")
         group.add_option("--name", dest="tag_name",
-                         help="filter tag_Name, comma separated")
+                         help="filter Name tag, comma separated")
         group.add_option("--filter_name", dest="filter_name",
                          help="Use a specific filter name")
         group.add_option("--filter_values", dest="filter_values",
