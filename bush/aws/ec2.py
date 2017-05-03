@@ -8,7 +8,7 @@ class EC2(AWSBase):
 %s ec2 <Command> [options]
 
 Commands
-    * list
+    * ls
     """[1:-1]
     SUB_COMMANDS = ["ls"]
 
@@ -27,7 +27,6 @@ public_ip_address
 security_groups
 state
 tag_Name
-
     """[1:-1]
     TAG_RE = re.compile(r"^tag_(.+)")
 

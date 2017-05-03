@@ -1,9 +1,12 @@
 from bush import option
-from bush import ec2
+from bush.aws.ec2 import EC2
 
 
-(options, args) = option.parse_args("bush")
+def run():
+    (options, args) = option.parse_args("bush")
 
-if args[0] == 'ec2':
-    if args[1] == 'ls':
-        ec2.list(options)
+    if args[0] == 'ec2':
+        ec2 = EC2(options)
+
+        if args[1] == 'ls':
+            ec2.ls()
