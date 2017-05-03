@@ -57,3 +57,9 @@ Filtering instances by a specific filter name:
 .. code-block:: sh
 
   $ bush ec2 ls --filter_name=instance-state-name --filter_values=stopped,pending
+
+Listing all EC2 images:
+
+.. code-block:: sh
+
+  $ bush ec2 images

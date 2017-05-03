@@ -10,3 +10,5 @@ def run():
 
         if args[1] == 'ls':
             ec2.ls()
+        elif args[1] == "images":
+            ec2.images()

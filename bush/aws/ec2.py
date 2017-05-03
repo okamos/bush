@@ -9,8 +9,9 @@ class EC2(AWSBase):
 
 Commands
     * ls
+    * images
     """[1:-1]
-    SUB_COMMANDS = ["ls"]
+    SUB_COMMANDS = ["ls", "images"]
 
     COLUMNS_HELP = """
 select columns, comma separated.
@@ -122,6 +123,17 @@ tag_Name
         else:
             return state
 
+    def __get_state_with_image(self, image):
+        state = image.state
+        if state == "available":
+            return color.green(state)
+        elif state == "pending":
+            return color.yellow(state)
+        elif state == "failed":
+            return color.red(state)
+        else:
+            return state
+
     def __get_security_group_names(self, groups):
         names = []
         if groups:
@@ -217,6 +229,53 @@ tag_Name
             i_info = sorted(i_info, key=lambda x: x[order_by])
             if self.options.order == "desc":
                 i_info.reverse()
+
+        print(header)
+        print("-" * (len(header) - 1))
+
+        for line in i_info:
+            l = []
+            for k in line:
+                l.append(line[k])
+            print(list_format.format(*l))
+
+    def images(self):
+        columns = [
+            "image_id",
+            "name",
+            "description",
+            "creation_date",
+            "state"
+        ]
+
+        owners = ["self"]
+        images = self.resource.images.filter(Owners=owners)
+
+        i_info = []
+        for image in images:
+            line = {}
+            for column in columns:
+                if column == "state":
+                    val = self.__get_state_with_image(image)
+                else:
+                    val = getattr(image, column)
+                line[column] = val or "-"
+
+            i_info.append(line)
+
+        formats = []
+        for i, column in enumerate(columns):
+            l = len(column)
+            for image in images:
+                val = getattr(image, column) or ""
+                if len(val) > l:
+                    l = len(val)
+
+            formats.append("{%s:<%s}" % (i, l + 1))
+        list_format = "".join(formats)
+        header = list_format.format(*columns)
+
+        i_info = sorted(i_info, key=lambda x: x["name"])
 
         print(header)
         print("-" * (len(header) - 1))
