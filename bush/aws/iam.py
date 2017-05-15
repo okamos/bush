@@ -50,11 +50,14 @@ Commands
 
         users = sorted(self.users, key=lambda x: x['name'])
 
-        print(header)
-        print("-" * (len(header)))
+        page = []
+        page.append(header)
+        page.append("-" * (len(header)))
 
         for user in users:
             info = []
             for key in user:
                 info.append(user[key])
-            print(list_format.format(*info))
+            page.append(list_format.format(*info))
+
+        return page

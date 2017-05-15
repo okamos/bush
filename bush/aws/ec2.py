@@ -230,14 +230,17 @@ tag_Name
             if self.options.order == "desc":
                 i_info.reverse()
 
-        print(header)
-        print("-" * (len(header) - 1))
+        page = []
+        page.append(header)
+        page.append("-" * (len(header) - 1))
 
         for line in i_info:
             l = []
             for k in line:
                 l.append(line[k])
-            print(list_format.format(*l))
+            page.append(list_format.format(*l))
+
+        return page
 
     def images(self):
         columns = [
@@ -277,11 +280,14 @@ tag_Name
 
         i_info = sorted(i_info, key=lambda x: x["name"])
 
-        print(header)
-        print("-" * (len(header) - 1))
+        page = []
+        page.append(header)
+        page.append("-" * (len(header) - 1))
 
         for line in i_info:
             l = []
             for k in line:
                 l.append(line[k])
-            print(list_format.format(*l))
+            page.append(list_format.format(*l))
+
+        return page
