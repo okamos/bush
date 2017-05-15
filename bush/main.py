@@ -1,3 +1,6 @@
+import sys
+import traceback
+
 from bush import option
 from bush.spinner import Spinner
 from bush.aws.ec2 import EC2
@@ -11,6 +14,18 @@ def run():
     spinner = Spinner()
     spinner.start()
 
+    try:
+        output = run_aws(options, args)
+    except:
+        spinner.stop()
+        traceback.print_exc()
+        sys.exit(2)
+
+    spinner.stop()
+    if output:
+        print("\n".join(output))
+
+def run_aws(options, args):
     if args[0] == 'ec2':
         ec2 = EC2(options)
 
@@ -28,6 +43,4 @@ def run():
         if args[1] == 'keys':
             output = iam.list_access_keys()
 
-    spinner.stop()
-    if output:
-        print("\n".join(output))
+    return output
