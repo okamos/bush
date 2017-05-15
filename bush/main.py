@@ -25,6 +25,9 @@ def run():
         if args[1] == 'users':
             output = iam.list_users()
 
+        if args[1] == 'keys':
+            output = iam.list_access_keys()
+
     spinner.stop()
     if output:
         print("\n".join(output))

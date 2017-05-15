@@ -6,7 +6,8 @@ Bush is wrapper AWS cli, eash to use.
 Available Services
 ==================
 
-1. ec2
+1. EC2
+2. IAM
 
 Usage
 =====
@@ -63,3 +64,23 @@ Listing all EC2 images:
 .. code-block:: sh
 
   $ bush ec2 images
+
+IAM
+---
+Listing all users:
+
+.. code-block:: sh
+
+  $ bush iam users
+
+Listing your access keys:
+
+.. code-block:: sh
+
+  $ bush iam keys
+
+Listing all access keys:
+
+.. code-block:: sh
+
+  $ bush iam keys -n "*"

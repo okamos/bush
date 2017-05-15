@@ -42,7 +42,7 @@ Resources
         group = OptionGroup(parser, "EC2 Options")
         group.add_option("--id", dest="instance_id",
                          help="filter instance ids, comma separated")
-        group.add_option("--name", dest="tag_name",
+        group.add_option("-n", "--name", dest="tag_name",
                          help="filter Name tag, comma separated")
         group.add_option("--filter_name", dest="filter_name",
                          help="Use a specific filter name")
@@ -69,6 +69,10 @@ Resources
 
         if len(sys.argv) < 3 or not (sys.argv[2] in IAM.SUB_COMMANDS):
             parser.print_help()
+            sys.exit(2)
 
+        if sys.argv[2] == "keys":
+            group.add_option("-n", "--name", dest="user_name",
+                             help="filter user names, comma separated, or *")
 
     return parser.parse_args()
