@@ -1,5 +1,6 @@
 from bush import option
 from bush.aws.ec2 import EC2
+from bush.aws.iam import IAM
 
 
 def run():
@@ -12,3 +13,9 @@ def run():
             ec2.ls()
         elif args[1] == "images":
             ec2.images()
+
+    if args[0] == 'iam':
+        iam = IAM(options)
+
+        if args[1] == 'users':
+            iam.list_users()

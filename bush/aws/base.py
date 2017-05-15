@@ -10,3 +10,4 @@ class AWSBase:
         self.options = options
         self.session = create_session(options)
         self.resource = self.session.resource(resource_name)
+        self.client = self.session.client(resource_name)

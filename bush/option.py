@@ -4,15 +4,17 @@ import sys
 
 from . import __version__
 from bush.aws.ec2 import EC2
+from bush.aws.iam import IAM
 
 
 def parse_args(prog_name):
-    RESOURCES = ['ec2']
+    RESOURCES = ['ec2', 'iam']
     usage = """
 %s <Resource> [options]
 
 Resources
     * ec2
+    * iam
     """[1:-1] % prog_name
 
     version = "%s %s" % (prog_name, __version__)
@@ -59,5 +61,14 @@ Resources
                              help="list order, asc or desc")
             group.add_option("--order_by", dest="order_by",
                              help="order by column")
+
+    if sys.argv[1] == "iam":
+        parser.set_usage(IAM.USAGE % prog_name)
+        group = OptionGroup(parser, "IAM Options")
+        parser.add_option_group(group)
+
+        if len(sys.argv) < 3 or not (sys.argv[2] in IAM.SUB_COMMANDS):
+            parser.print_help()
+
 
     return parser.parse_args()
