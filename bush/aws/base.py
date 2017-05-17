@@ -9,5 +9,21 @@ class AWSBase:
         self.name = resource_name
         self.options = options
         self.session = create_session(options)
-        self.resource = self.session.resource(resource_name)
-        self.client = self.session.client(resource_name)
+
+    @property
+    def resource(self):
+        if not hasattr(self, '__resource'):
+            self.__set_resource()
+        return self.__resource
+
+    @property
+    def client(self):
+        if not hasattr(self, '__client'):
+            self.__set_client()
+        return self.__client
+
+    def __set_resource(self):
+        self.__resource = self.session.resource(self.name)
+
+    def __set_client(self):
+        self.__client = self.session.client(self.name)
