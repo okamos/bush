@@ -8,7 +8,7 @@ from bush.aws.iam import IAM
 
 
 def run():
-    (options, args) = option.parse_args("bush")
+    (options, args) = option.parse_args('bush')
 
     output = ''
     spinner = Spinner()
@@ -23,7 +23,7 @@ def run():
 
     spinner.stop()
     if output:
-        print("\n".join(output))
+        print('\n'.join(output))
 
 def run_aws(options, args):
     if args[0] == 'ec2':
@@ -31,7 +31,7 @@ def run_aws(options, args):
 
         if args[1] == 'ls':
             output = ec2.ls()
-        elif args[1] == "images":
+        elif args[1] == 'images':
             output = ec2.images()
 
     if args[0] == 'iam':

@@ -2,7 +2,7 @@ from bush.aws.session import create_session
 
 
 class AWSBase:
-    # USAGE = ""
+    # USAGE = ''
     # SUB_COMMANDS = []
 
     def __init__(self, options, resource_name):

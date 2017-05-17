@@ -6,28 +6,28 @@ from bush.aws.base import AWSBase
 
 class IAM(AWSBase):
     USAGE = """
-%s iam <Command> [options]
+{} iam <Command> [options]
 
 Commands
     * users
     * keys
-    """[1:-1]
+    """
 
-    SUB_COMMANDS = ["users", "keys"]
+    SUB_COMMANDS = ['users', 'keys']
 
     def __init__(self, options):
-        super().__init__(options, "iam")
+        super().__init__(options, 'iam')
 
     def __get_users(self):
         users = self.client.list_users(MaxItems=1000)['Users']
         self.users = []
         for user in users:
             info = {}
-            info["id"] = user["UserId"]
-            info["name"] = user["UserName"]
-            time_format = "%Y/%m/%d %H:%M:%S"
-            info["creation_date"] = user["CreateDate"].strftime(time_format)
-            info["Arn"] = user["Arn"]
+            info['id'] = user['UserId']
+            info['name'] = user['UserName']
+            time_format = '%Y/%m/%d %H:%M:%S'
+            info['creation_date'] = user['CreateDate'].strftime(time_format)
+            info['Arn'] = user['Arn']
             self.users.append(info)
 
     def __get_access_keys(self, user_name=None):
@@ -51,17 +51,17 @@ Commands
         keys = []
         for key in metadata:
             data = {}
-            data["id"] = key["AccessKeyId"]
-            data["user_name"] = key["UserName"]
-            time_format = "%Y/%m/%d %H:%M:%S"
-            data["creation_date"] = key["CreateDate"].strftime(time_format)
-            data["state"] = key["Status"]
+            data['id'] = key['AccessKeyId']
+            data['user_name'] = key['UserName']
+            time_format = '%Y/%m/%d %H:%M:%S'
+            data['creation_date'] = key['CreateDate'].strftime(time_format)
+            data['state'] = key['Status']
             keys.append(data)
 
         return keys
 
     def __correct_access_keys(self, user_names):
-        if user_names == "":
+        if user_names == '':
             return self.__get_access_keys()
 
         keys = []
@@ -69,36 +69,36 @@ Commands
 
         if self.__include_only_wild_card(user_names):
             for user in self.users:
-                keys.extend(self.__get_access_keys(user["name"]))
+                keys.extend(self.__get_access_keys(user['name']))
         else:
             for user_name in user_names:
                 for user in self.users:
-                    if user_name in user["name"]:
-                        keys.extend(self.__get_access_keys(user["name"]))
+                    if user_name in user['name']:
+                        keys.extend(self.__get_access_keys(user['name']))
 
         return keys
 
     def __include_only_wild_card(self, arr):
         try:
-            arr.index("*")
+            arr.index('*')
             return True
         except:
             return False
 
     def __get_state(self, state):
-        if state == "Active":
+        if state == 'Active':
             return color.green(state)
-        elif state == "Inactive":
+        elif state == 'Inactive':
             return color.red(state)
         else:
             return state
 
     def list_users(self):
         columns = [
-            "id",
-            "name",
-            "creation_date",
-            "Arn"
+            'id',
+            'name',
+            'creation_date',
+            'Arn'
         ]
 
         self.__get_users()
@@ -110,16 +110,16 @@ Commands
                 if len(user[column]) > max_len:
                     max_len = len(user[column])
 
-            formats.append("{%s:<%s}" % (i, max_len + 1))
+            formats.append('{%s:<%s}' % (i, max_len + 1))
 
-        list_format = "".join(formats)
+        list_format = ''.join(formats)
         header = list_format.format(*columns)
 
         users = sorted(self.users, key=lambda x: x['name'])
 
         page = []
         page.append(header)
-        page.append("-" * (len(header) - 1))
+        page.append('-' * (len(header) - 1))
 
         for user in users:
             info = []
@@ -131,16 +131,16 @@ Commands
 
     def list_access_keys(self):
         columns = [
-            "id",
-            "user_name",
-            "creation_date",
-            "state"
+            'id',
+            'user_name',
+            'creation_date',
+            'state'
         ]
 
         options = self.options
-        user_names = ""
+        user_names = ''
         if (options.user_name):
-            user_names = options.user_name.split(",")
+            user_names = options.user_name.split(',')
 
         keys = self.__correct_access_keys(user_names)
 
@@ -151,21 +151,21 @@ Commands
                 if len(key[column]) > max_len:
                     max_len = len(key[column])
 
-            formats.append("{%s:<%s}" % (i, max_len + 1))
+            formats.append('{%s:<%s}' % (i, max_len + 1))
 
-        list_format = "".join(formats)
+        list_format = ''.join(formats)
         header = list_format.format(*columns)
 
         keys = sorted(keys, key=lambda x: x['user_name'])
 
         page = []
         page.append(header)
-        page.append("-" * (len(header) - 1))
+        page.append('-' * (len(header) - 1))
 
         for key in keys:
             info = []
             for k in key:
-                if k == "state":
+                if k == 'state':
                     info.append(self.__get_state(key[k]))
                 else:
                     info.append(key[k])
