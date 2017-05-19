@@ -47,6 +47,10 @@ def run_aws(options, args):
             output = ec2.ls()
         elif args[1] == 'images':
             output = ec2.images()
+        elif args[1] == 'start':
+            output = ec2.start_instances()
+        elif args[1] == 'stop':
+            output = ec2.stop_instances()
     elif args[0] == 'iam':
         iam = IAM(options)
 

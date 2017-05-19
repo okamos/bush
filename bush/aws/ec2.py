@@ -9,8 +9,10 @@ class EC2(AWSBase):
 Commands
     * ls
     * images
+    * start
+    * stop
     """
-    SUB_COMMANDS = ['ls', 'images']
+    SUB_COMMANDS = ['ls', 'images', 'start', 'stop']
 
     COLUMNS_HELP = """select columns, comma separated.
 availability_zone,
@@ -287,5 +289,99 @@ tag_Name
             for k in line:
                 l.append(line[k])
             page.append(list_format.format(*l))
+
+        return page
+
+    def start_instances(self):
+        self.options.columns = 'instance_id,tag_Name,state'
+        self.__get_instances()
+
+        instance_ids = []
+        will_starts = []
+        for instance in self.instances:
+            will_start = {}
+            state = instance.state['Code']
+            if state == 80:
+                instance_ids.append(instance.instance_id)
+                will_start['instance_id'] = instance.instance_id
+                will_start['tag_Name'] = self.__get_tag_value(
+                    instance.tags, 'Name'
+                )
+                will_starts.append(will_start)
+
+        if len(instance_ids) == 0:
+            return ['Not found stopped instances']
+
+        sorted_instances = sorted(
+            will_starts, key=lambda x: x['instance_id']
+        )
+
+        startings = self.client.start_instances(
+            InstanceIds=instance_ids
+            )['StartingInstances']
+        sorted_startings = sorted(startings, key=lambda x: x['InstanceId'])
+
+        formats = []
+        for i, column in enumerate(['instance_id', 'tag_Name']):
+            max_len = len(max(w[column] for w in will_starts))
+            formats.append('{%s:<%s}' % (i, max_len + 1))
+
+        headers = ['instance_id', 'tag_Name']
+        list_format = ''.join(formats)
+        header = list_format.format(*headers)
+        page = [header, '-' * (len(header) - 1)]
+
+        for i, starting in enumerate(sorted_startings):
+            if starting['CurrentState']['Code'] == 0:
+                page.append(list_format.format(
+                    sorted_instances[i]['instance_id'],
+                    sorted_instances[i]['tag_Name']
+                ))
+
+        return page
+
+    def stop_instances(self):
+        self.options.columns = 'instance_id,tag_Name,state'
+        self.__get_instances()
+
+        instance_ids = []
+        will_stops = []
+        for instance in self.instances:
+            will_stop = {}
+            state = instance.state['Code']
+            if state == 16:
+                instance_ids.append(instance.instance_id)
+                will_stop['instance_id'] = instance.instance_id
+                will_stop['tag_Name'] = self.__get_tag_value(
+                    instance.tags, 'Name'
+                )
+                will_stops.append(will_stop)
+
+        if len(instance_ids) == 0:
+            return ['Not found running instances']
+
+        sorted_instances = sorted(will_stops, key=lambda x: x['instance_id'])
+
+        stoppings = self.client.stop_instances(
+            InstanceIds=instance_ids
+            )['StoppingInstances']
+        sorted_stoppings = sorted(stoppings, key=lambda x: x['InstanceId'])
+
+        formats = []
+        for i, column in enumerate(['instance_id', 'tag_Name']):
+            max_len = len(max(w[column] for w in will_stops))
+            formats.append('{%s:<%s}' % (i, max_len + 1))
+
+        headers = ['instance_id', 'tag_Name']
+        list_format = ''.join(formats)
+        header = list_format.format(*headers)
+        page = [header, '-' * (len(header) - 1)]
+
+        for i, stopping in enumerate(sorted_stoppings):
+            if stopping['CurrentState']['Code'] == 64:
+                page.append(list_format.format(
+                    sorted_instances[i]['instance_id'],
+                    sorted_instances[i]['tag_Name']
+                ))
 
         return page
