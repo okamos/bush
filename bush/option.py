@@ -7,19 +7,15 @@ from bush.aws.ec2 import EC2
 from bush.aws.iam import IAM
 
 
-def parse_args(prog_name):
-    RESOURCES = ['ec2', 'iam']
-    usage = """
-{} <Resource> [options]
+def build_parser():
+    usage = """%prog <Resource> [options]
 
 Resources
     * ec2
     * iam
-    """.format(prog_name)
+    """
 
-    version = '{} {}'.format(prog_name, __version__)
-
-    parser = OptionParser(usage=usage, version=version)
+    parser = OptionParser(usage=usage, version='%prog {}'.format(__version__))
     parser.add_option('-p', '--profile',
                       action='store', type='string', dest='profile',
                       help='Use a specific profile from your credential file')
@@ -33,12 +29,10 @@ Resources
                       action='store', type='string', dest='secret_key',
                       help='Use a specific AWS_SECRET_ACCESS_KEY')
 
-    if len(sys.argv) < 2 or not (sys.argv[1] in RESOURCES):
-        parser.print_help()
-        sys.exit(2)
+    argv_len = len(sys.argv)
 
-    if sys.argv[1] == 'ec2':
-        parser.set_usage(EC2.USAGE.format(prog_name))
+    if argv_len >= 2 and sys.argv[1] == 'ec2':
+        parser.set_usage(EC2.USAGE)
         group = OptionGroup(parser, 'EC2 Options')
         group.add_option('--id', dest='instance_id',
                          help='filter instance ids, comma separated')
@@ -50,11 +44,7 @@ Resources
                          help='filter values, comma separated')
         parser.add_option_group(group)
 
-        if len(sys.argv) < 3 or not (sys.argv[2] in EC2.SUB_COMMANDS):
-            parser.print_help()
-            sys.exit(2)
-
-        if sys.argv[2] == 'ls':
+        if argv_len >= 3 and sys.argv[2] == 'ls':
             group.add_option('-c', '--columns', dest='columns',
                              help=EC2.COLUMNS_HELP)
             group.add_option('-o', '--order', dest='order',
@@ -62,17 +52,13 @@ Resources
             group.add_option('--order_by', dest='order_by',
                              help='order by column')
 
-    if sys.argv[1] == 'iam':
-        parser.set_usage(IAM.USAGE.format(prog_name))
+    if argv_len >= 2 and sys.argv[1] == 'iam':
+        parser.set_usage(IAM.USAGE)
         group = OptionGroup(parser, 'IAM Options')
         parser.add_option_group(group)
 
-        if len(sys.argv) < 3 or not (sys.argv[2] in IAM.SUB_COMMANDS):
-            parser.print_help()
-            sys.exit(2)
-
-        if sys.argv[2] == 'keys':
+        if argv_len >= 3 and sys.argv[2] == 'keys':
             group.add_option('-n', '--name', dest='user_name',
                              help='filter user names, comma separated, or *')
 
-    return parser.parse_args()
+    return parser

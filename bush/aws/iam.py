@@ -5,8 +5,7 @@ from bush.aws.base import AWSBase
 
 
 class IAM(AWSBase):
-    USAGE = """
-{} iam <Command> [options]
+    USAGE = """%prog iam <Command> [options]
 
 Commands
     * users

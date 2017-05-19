@@ -4,8 +4,7 @@ from bush.aws.base import AWSBase
 
 
 class EC2(AWSBase):
-    USAGE = """
-{} ec2 <Command> [options]
+    USAGE = """%prog ec2 <Command> [options]
 
 Commands
     * ls
