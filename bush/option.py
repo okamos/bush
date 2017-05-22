@@ -53,6 +53,10 @@ Resources
                 group.add_option('--order_by', dest='order_by',
                                  help='order by column')
 
+            if sys.argv[2] == 'images':
+                group.add_option('-i', '--image_id', dest='image_id',
+                                 help='filter image ids, comma separated')
+
     if argv_len >= 2 and sys.argv[1] == 'iam':
         parser.set_usage(IAM.USAGE)
         group = OptionGroup(parser, 'IAM Options')

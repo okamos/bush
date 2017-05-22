@@ -251,8 +251,12 @@ tag_Name
             'state'
         ]
 
-        owners = ['self']
-        images = self.resource.images.filter(Owners=owners)
+        if self.options.image_id:
+            image_ids = self.options.image_id.split(',')
+            images = self.resource.images.filter(ImageIds=image_ids)
+        else:
+            owners = ['self']
+            images = self.resource.images.filter(Owners=owners)
 
         i_info = []
         for image in images:
