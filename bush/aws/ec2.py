@@ -11,8 +11,9 @@ Commands
     * images
     * start
     * stop
+    * remove
     """
-    SUB_COMMANDS = ['ls', 'images', 'start', 'stop']
+    SUB_COMMANDS = ['ls', 'images', 'start', 'stop', 'remove']
 
     COLUMNS_HELP = """select columns, comma separated.
 availability_zone,
@@ -387,5 +388,52 @@ tag_Name
                     sorted_instances[i]['instance_id'],
                     sorted_instances[i]['tag_Name']
                 ))
+
+        return page
+
+    def terminate_instances(self):
+        self.options.columns = 'instance_id,tag_Name,state'
+        self.__get_instances()
+
+        instance_ids = []
+        will_terminates = []
+        for instance in self.instances:
+            will_terminate = {}
+            state = instance.state['Code']
+            if state == 16 or state == 80:
+                instance_ids.append(instance.instance_id)
+                will_terminate['instance_id'] = instance.instance_id
+                will_terminate['tag_Name'] = self.__get_tag_value(
+                    instance.tags, 'Name'
+                )
+                will_terminates.append(will_terminate)
+
+        if len(instance_ids) == 0:
+            return ['Not found running or stopped instances']
+
+        sorted_instances = sorted(
+            will_terminates, key=lambda x: x['instance_id']
+        )
+
+        terminating = self.client.terminate_instances(
+            InstanceIds=instance_ids
+            )['TerminatingInstances']
+        sorted_stoppings = sorted(terminating, key=lambda x: x['InstanceId'])
+
+        formats = []
+        for i, column in enumerate(['instance_id', 'tag_Name']):
+            max_len = len(max(w[column] for w in will_terminates))
+            formats.append('{%s:<%s}' % (i, max_len + 1))
+
+        headers = ['instance_id', 'tag_Name']
+        list_format = ''.join(formats)
+        header = list_format.format(*headers)
+        page = [header, '-' * (len(header) - 1)]
+
+        for i, stopping in enumerate(sorted_stoppings):
+            page.append(list_format.format(
+                sorted_instances[i]['instance_id'],
+                sorted_instances[i]['tag_Name']
+            ))
 
         return page

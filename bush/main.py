@@ -51,6 +51,8 @@ def run_aws(options, args):
             output = ec2.start_instances()
         elif args[1] == 'stop':
             output = ec2.stop_instances()
+        elif args[1] == 'remove':
+            output = ec2.terminate_instances()
     elif args[0] == 'iam':
         iam = IAM(options)
 
