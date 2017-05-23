@@ -163,6 +163,16 @@ tag_Name
 
         return ''.join(formats)
 
+    def __is_non_filter(self):
+        options = self.options
+        iid = options.instance_id
+        name = options.tag_name
+        fil = options.filter_name and options.filter_values
+
+        if iid or name or fil:
+            return False
+        return True
+
     def ls(self):
         default_columns = [
             'instance_id',
@@ -298,6 +308,9 @@ tag_Name
         return page
 
     def start_instances(self):
+        if self.__is_non_filter():
+            return ['Filter id or name required.']
+
         self.options.columns = 'instance_id,tag_Name,state'
         self.__get_instances()
 
@@ -346,6 +359,9 @@ tag_Name
         return page
 
     def stop_instances(self):
+        if self.__is_non_filter():
+            return ['Filter id or name required.']
+
         self.options.columns = 'instance_id,tag_Name,state'
         self.__get_instances()
 
@@ -392,6 +408,9 @@ tag_Name
         return page
 
     def terminate_instances(self):
+        if self.__is_non_filter():
+            return ['Filter id or name required.']
+
         self.options.columns = 'instance_id,tag_Name,state'
         self.__get_instances()
 
@@ -418,7 +437,7 @@ tag_Name
         terminating = self.client.terminate_instances(
             InstanceIds=instance_ids
             )['TerminatingInstances']
-        sorted_stoppings = sorted(terminating, key=lambda x: x['InstanceId'])
+        sorted_terminating = sorted(terminating, key=lambda x: x['InstanceId'])
 
         formats = []
         for i, column in enumerate(['instance_id', 'tag_Name']):
@@ -430,7 +449,7 @@ tag_Name
         header = list_format.format(*headers)
         page = [header, '-' * (len(header) - 1)]
 
-        for i, stopping in enumerate(sorted_stoppings):
+        for i, stopping in enumerate(sorted_terminating):
             page.append(list_format.format(
                 sorted_instances[i]['instance_id'],
                 sorted_instances[i]['tag_Name']
