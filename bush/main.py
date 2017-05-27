@@ -7,6 +7,7 @@ from bush import option
 from bush.spinner import Spinner
 from bush.aws.ec2 import EC2
 from bush.aws.iam import IAM
+from bush.aws.rds import RDS
 
 
 def run():
@@ -60,5 +61,10 @@ def run_aws(options, args):
             output = iam.list_users()
         elif args[1] == 'keys':
             output = iam.list_access_keys()
+    elif args[0] == 'rds':
+        rds = RDS(options)
+
+        if args[1] == 'ls':
+            output = rds.ls()
 
     return output

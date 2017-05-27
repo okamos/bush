@@ -5,6 +5,7 @@ import sys
 from . import __version__
 from bush.aws.ec2 import EC2
 from bush.aws.iam import IAM
+from bush.aws.rds import RDS
 
 
 def build_parser():
@@ -13,6 +14,7 @@ def build_parser():
 Resources
     * ec2
     * iam
+    * rds
     """
 
     parser = OptionParser(usage=usage, version='%prog {}'.format(__version__))
@@ -28,6 +30,8 @@ Resources
     parser.add_option('--secret_key',
                       action='store', type='string', dest='secret_key',
                       help='Use a specific AWS_SECRET_ACCESS_KEY')
+    parser.add_option('--dry-run', type='string', dest='dry_run',
+                      help='')
 
     argv_len = len(sys.argv)
 
@@ -65,5 +69,14 @@ Resources
         if argv_len >= 3 and sys.argv[2] == 'keys':
             group.add_option('-n', '--name', dest='user_name',
                              help='filter user names, comma separated, or *')
+
+    if argv_len >= 2 and sys.argv[1] == 'rds':
+        parser.set_usage(RDS.USAGE)
+        group = OptionGroup(parser, 'RDS Options')
+        parser.add_option_group(group)
+
+        if argv_len >= 3 and sys.argv[2] == 'ls':
+            group.add_option('--id', dest='db_instance_id',
+                             help='filter instance ids, comma separated, or *')
 
     return parser
