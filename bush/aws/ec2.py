@@ -235,8 +235,8 @@ tag_Name
         list_format = self.__get_list_format(headers)
         header = list_format.format(*headers)
 
-        order_by = self.options.order_by
-        if order_by and order_by in headers:
+        order_by = self.options.order_by or 'tag_Name'
+        if order_by in headers:
             i_info = sorted(i_info, key=lambda x: x[order_by])
             if self.options.order == 'desc':
                 i_info.reverse()
